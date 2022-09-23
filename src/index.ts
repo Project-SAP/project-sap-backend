@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 
 ///
 /// Blank project template from: https://developer.okta.com/blog/2018/11/15/node-express-typescript
@@ -8,6 +9,8 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 const port = process.env.SERVER_PORT;
+
+app.use(cors());
 
 // call `curl localhost:8080/test` or simply put URL in broswer.
 app.get("/test", (req, res) => {

@@ -6,7 +6,11 @@ Backend piece for project.
 - Visual Studio Code (Highly recommedned!)
 
 # Installing and Running Locally
-Once the repository is pulled down, run `npm install` to download and install all node dependencies. Once installation has finished run `npm run start` to run the API. 
+Once the repository is pulled down, run `npm install` to download and install all node dependencies.
+
+Rename `.env.sample` to `.env` if running locally.
+
+Once installation has finished run `npm run start` to run the API. 
 
 ### Making API Calls
 For the purposes of testing locally, we can use `curl` to touch the endpoints and get their responses. Long term we might find use for testing suites like [Postman](https://www.postman.com/) to simplify the more complex endpoints.
