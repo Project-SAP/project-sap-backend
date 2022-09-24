@@ -5,5 +5,8 @@ module.exports = {
     testMatch: ["**/**/*.test.ts"],
     verbose: true,
     forceExit: true,
+    coveragePathIgnorePatterns: [
+        "/node_modules/"
+    ]
     // clearMocks: true
 };

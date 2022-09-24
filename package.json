@@ -2,7 +2,7 @@
   "name": "project-sap-backend",
   "version": "1.0.0",
   "description": "Backend piece for project.",
-  "main": "dist/index.js",
+  "main": "dist/main/main.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
