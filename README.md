@@ -8,7 +8,7 @@ Backend piece for project.
 # Installing and Running Locally
 Once the repository is pulled down, run `npm install` to download and install all node dependencies.
 
-Rename `.env.sample` to `.env` if running locally.
+Create `.env` in root repository directory if `.env` not created yet. Copy all updated environment variables in Discord channel #important to `.env`.
 
 Once installation has finished run `npm run start` to run the API. 
 
