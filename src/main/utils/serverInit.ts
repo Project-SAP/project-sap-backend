@@ -7,7 +7,7 @@ import cors from 'cors';
  * @returns application context of type `core.Express`
  */
 export function serverInit(configure: (express: Express) => void): Express {
-    const app = express();
+    const app: Express = express();
     app.use(cors());
     app.use(express.json());
 
