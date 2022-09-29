@@ -14,7 +14,7 @@ describe('TestController', () => {
     });
 
     it('should configure', () => {
-        expect(testContext).toBeTruthy();
+        expect(testContext).toBeFalsy();
     });
 
     describe('GET route', () => {
