@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import DataModel from '../models/dataModel';
 
 /**
  * Example router containing all the endpoints at a given URL.
@@ -12,22 +13,30 @@ export class TestController {
     constructor() {
         // call `curl localhost:8080/test` or simply put URL in broswer.
         this.router.get('/', (req: Request, res: Response) => {
-            return res.json('This is a test GET payload');
+            return res.json({
+                message: 'This is a test GET payload',
+            } as DataModel);
         });
 
         // call `curl -X POST localhost:8080/test`
         this.router.post('/', (req: Request, res: Response) => {
-            return res.json('This is a test POST payload');
+            return res.json({
+                message: 'This is a test POST payload',
+            } as DataModel);
         });
 
         // call `curl -X PUT localhost:8080/test`
         this.router.put('/', (req: Request, res: Response) => {
-            return res.json('This is a test PUT payload');
+            return res.json({
+                message: 'This is a test PUT payload',
+            } as DataModel);
         });
 
         // call `curl -X DELETE localhost:8080/test`
         this.router.delete('/', (req: Request, res: Response) => {
-            return res.json('This is a test DELETE payload');
+            return res.json({
+                message: 'This is a test DELETE payload',
+            } as DataModel);
         });
     }
 
