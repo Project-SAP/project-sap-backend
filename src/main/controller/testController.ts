@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response } from 'express';
 
 /**
  * Example router containing all the endpoints at a given URL.
@@ -7,27 +7,27 @@ import { Router, Request, Response } from "express";
 export class TestController {
     private router = Router();
 
-    private basePath = "/test";
+    private basePath = '/test';
 
     constructor() {
         // call `curl localhost:8080/test` or simply put URL in broswer.
-        this.router.get("/", (req: Request, res: Response) => {
-            return res.json("This is a test GET payload");
+        this.router.get('/', (req: Request, res: Response) => {
+            return res.json('This is a test GET payload');
         });
 
         // call `curl -X POST localhost:8080/test`
-        this.router.post("/", (req: Request, res: Response) => {
-            return res.json("This is a test POST payload");
+        this.router.post('/', (req: Request, res: Response) => {
+            return res.json('This is a test POST payload');
         });
 
         // call `curl -X PUT localhost:8080/test`
-        this.router.put("/", (req: Request, res: Response) => {
-            return res.json("This is a test PUT payload");
+        this.router.put('/', (req: Request, res: Response) => {
+            return res.json('This is a test PUT payload');
         });
 
         // call `curl -X DELETE localhost:8080/test`
-        this.router.delete("/", (req: Request, res: Response) => {
-            return res.json("This is a test DELETE payload");
+        this.router.delete('/', (req: Request, res: Response) => {
+            return res.json('This is a test DELETE payload');
         });
     }
 

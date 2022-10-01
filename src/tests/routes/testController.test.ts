@@ -19,7 +19,9 @@ describe('TestController', () => {
 
     describe('GET route', () => {
         it('should return a 200', async () => {
-            const response = await request(testContext).get(controller.getBasePath());
+            const response = await request(testContext).get(
+                controller.getBasePath()
+            );
             expect(response.statusCode).toEqual(200);
             expect(response.body).toEqual('This is a test GET payload');
         });
@@ -27,16 +29,19 @@ describe('TestController', () => {
 
     describe('POST route', () => {
         it('should return a 200', async () => {
-            const response = await request(testContext).post(controller.getBasePath());
+            const response = await request(testContext).post(
+                controller.getBasePath()
+            );
             expect(response.statusCode).toEqual(200);
             expect(response.body).toEqual('This is a test POST payload');
-
         });
     });
 
     describe('PUT route', () => {
         it('should return a 200', async () => {
-            const response = await request(testContext).put(controller.getBasePath());
+            const response = await request(testContext).put(
+                controller.getBasePath()
+            );
             expect(response.statusCode).toEqual(200);
             expect(response.body).toEqual('This is a test PUT payload');
         });
@@ -44,7 +49,9 @@ describe('TestController', () => {
 
     describe('DELETE route', () => {
         it('should return a 200', async () => {
-            const response = await request(testContext).delete(controller.getBasePath());
+            const response = await request(testContext).delete(
+                controller.getBasePath()
+            );
             expect(response.statusCode).toEqual(200);
             expect(response.body).toEqual('This is a test DELETE payload');
         });

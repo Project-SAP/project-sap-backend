@@ -16,10 +16,10 @@ export class ServerApplication {
         dotenv.config();
         this.port = process.env.SERVER_PORT;
 
-        this.context = serverInit((app) => {
+        this.context = serverInit((app: Express) => {
             const testController = new TestController();
 
-            this.addController(testController);
+            app.use(testController.getBasePath(), testController.getRouter());
         });
 
         this.context.listen(this.port, async () => {
@@ -27,10 +27,5 @@ export class ServerApplication {
             // tslint:disable-next-line:no-console
             console.log(`started server at http://localhost:${this.port}`);
         });
-    }
-
-    // TODO: Add parent controller class
-    private addController(controller: any) {
-        this.context.use(controller.getBasePath(), controller.getRouter());
     }
 }
