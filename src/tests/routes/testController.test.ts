@@ -23,7 +23,7 @@ describe('TestController', () => {
                 controller.getBasePath()
             );
             expect(response.statusCode).toEqual(200);
-            expect(response.body).toEqual('This is a test GET payload');
+            expect(response.body.message).toEqual('This is a test GET payload');
         });
     });
 
@@ -33,7 +33,7 @@ describe('TestController', () => {
                 controller.getBasePath()
             );
             expect(response.statusCode).toEqual(200);
-            expect(response.body).toEqual('This is a test POST payload');
+            expect(response.body.message).toEqual('This is a test POST payload');
         });
     });
 
@@ -43,7 +43,7 @@ describe('TestController', () => {
                 controller.getBasePath()
             );
             expect(response.statusCode).toEqual(200);
-            expect(response.body).toEqual('This is a test PUT payload');
+            expect(response.body.message).toEqual('This is a test PUT payload');
         });
     });
 
@@ -53,7 +53,7 @@ describe('TestController', () => {
                 controller.getBasePath()
             );
             expect(response.statusCode).toEqual(200);
-            expect(response.body).toEqual('This is a test DELETE payload');
+            expect(response.body.message).toEqual('This is a test DELETE payload');
         });
     });
 });
