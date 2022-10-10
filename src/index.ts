@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import { connect } from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -6,11 +7,14 @@ import cors from "cors";
 /// Blank project template from: https://developer.okta.com/blog/2018/11/15/node-express-typescript
 /// Might need to use a package such as CORS to address any cross-origin request issues.
 ///
-dotenv.config();
+dotenv.config({ path: "./config/.env" });
 const app: Express = express();
 const port = process.env.SERVER_PORT;
 
 app.use(cors());
+
+// Connect to the database
+connect(process.env.MONGODB_URI);
 
 // call `curl localhost:8080/test` or simply put URL in broswer.
 app.get("/test", (req: Request, res: Response) => {
