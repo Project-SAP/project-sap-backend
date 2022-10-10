@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Project-SAP/project-sap-backend#readme",
   "dependencies": {
+    "@decorators/express": "^2.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "typescript": "^4.8.3"
