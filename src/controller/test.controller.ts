@@ -1,7 +1,7 @@
 import { Get } from '@decorators/express';
 import { Controller, Delete, Post, Put } from '@decorators/express/lib/src';
 import { Request, Response } from 'express';
-import DataModel from '../models/dataModel';
+import DataModel from '../models/data.model';
 
 /**
  * Example router containing all the endpoints at a given URL.

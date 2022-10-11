@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import { attachControllers } from '@decorators/express';
-import { TestController } from './controller/testController';
+import { TestController } from './controller/test.controller';
 import cors from 'cors';
 
 /**

@@ -1,8 +1,8 @@
 import { Express } from 'express';
-import { serverInit } from '../../main/utils/serverInit';
 import request from 'supertest';
 import { attachControllers } from '@decorators/express';
-import { TestController } from './../../main/controller/testController';
+import { TestController } from './../../src/controller/test.controller';
+import { serverInit } from './../../src/utils/server.utils';
 
 /**
  * Example integration routing testing
