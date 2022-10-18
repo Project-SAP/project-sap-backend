@@ -11,7 +11,7 @@ Backend piece for project.
 
 Once the repository is pulled down, run `npm install` to download and install all node dependencies.
 
-Create `.env` in root repository directory if `.env` not created yet. Copy all updated environment variables in Discord channel #important to `.env`.
+Create `.env` in the config directory if `.env` file is not created yet. Copy all updated environment variables in Discord channel #important to `.env`.
 
 Once installation has finished run `npm run start` to run the API.
 

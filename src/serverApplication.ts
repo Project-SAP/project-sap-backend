@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import { attachControllers } from '@decorators/express';
 import { TestController } from './controller/test.controller';
+import { connect } from "mongoose";
 import cors from 'cors';
 
 /**
@@ -14,7 +15,7 @@ export class ServerApplication {
 
     constructor() {
         // Load environment variables
-        dotenv.config();
+        dotenv.config({ path: `${__dirname}/../config/.env` });
         this.port = process.env.SERVER_PORT;
 
         this.context = this.serverInit((app: Express) => {
@@ -36,6 +37,9 @@ export class ServerApplication {
 
         // User defined configuration
         configure(app);
+
+        // Connect to the database
+        connect(process.env.MONGODB_URI);
 
         return app;
     }
