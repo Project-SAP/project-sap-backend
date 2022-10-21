@@ -16,6 +16,9 @@ const UserSchema: Schema = new Schema<User>({
     },
 });
 
+/**
+ * When saving a user model, always hash the password
+ */
 UserSchema.pre('save', async function (next) {
     const user = this;
     const hash = await bcrypt.hash(user.password, 24);
@@ -35,6 +38,9 @@ UserSchema.methods.isValidPassword = async function (password: string) {
     return compare;
 };
 
-const UserModel = mongoose.model<User>('user', UserSchema);
+/**
+ * A model based on the given schema. Abstracts and simplifies database calls.
+ */
+const UserRepository = mongoose.model<User>('user', UserSchema);
 
-export default UserModel;
+export default UserRepository;
