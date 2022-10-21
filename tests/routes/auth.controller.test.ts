@@ -2,9 +2,9 @@ import { Express } from 'express';
 import { serverInit } from '../../src/utils/server.utils';
 import { attachControllers } from '@decorators/express';
 import { AuthController } from '../../src/controller/auth.controller';
-import { User } from '../../src/models/user.model';
-import request from 'supertest';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
+import User from '../../src/models/user.model';
+import request from 'supertest';
 
 describe('AuthorizationController', () => {
     const controllerPath = '/auth';

@@ -1,6 +1,6 @@
+import { attachControllers } from '@decorators/express';
 import { Express } from 'express';
 import request from 'supertest';
-import { attachControllers } from '@decorators/express';
 import { TestController } from './../../src/controller/test.controller';
 import { serverInit } from './../../src/utils/server.utils';
 

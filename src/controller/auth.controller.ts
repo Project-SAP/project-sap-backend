@@ -1,7 +1,8 @@
 import { Controller, Post } from '@decorators/express';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
-import { User } from './../models/user.model';
+import User from './../models/user.model';
+import UserRepository from './../models/schemas/user.schema';
 
 /**
  * Controller for handling both authorization and authentication
@@ -13,14 +14,14 @@ export class AuthController {
      */
     @Post('/login')
     public userLogin(request: Request, response: Response) {
-        const login: User = request.body;
+        const loginRequest: User = request.body;
         let errorList: Error[];
 
-        if (!login.email) {
+        if (!loginRequest.email) {
             errorList.push(new Error('No email given'));
         }
 
-        if (!login.password) {
+        if (!loginRequest.password) {
             errorList.push(new Error('No password given'));
         }
 

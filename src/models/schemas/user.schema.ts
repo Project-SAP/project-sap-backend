@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 import User from '../user.model';
 /**
@@ -41,6 +41,6 @@ UserSchema.methods.isValidPassword = async function (password: string) {
 /**
  * A model based on the given schema. Abstracts and simplifies database calls.
  */
-const UserRepository = mongoose.model<User>('user', UserSchema);
+const UserRepository: Model<User> = mongoose.model<User>('user', UserSchema);
 
 export default UserRepository;
