@@ -2,8 +2,9 @@ import { Express } from 'express';
 import { serverInit } from '../../src/utils/server.utils';
 import { attachControllers } from '@decorators/express';
 import { AuthController } from '../../src/controller/auth.controller';
-import { LoginModel } from './../../src/models/login.model';
+import { User } from '../../src/models/user.model';
 import request from 'supertest';
+import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 
 describe('AuthorizationController', () => {
     const controllerPath = '/auth';
@@ -25,17 +26,17 @@ describe('AuthorizationController', () => {
 
         describe.each`
             email        | password        | expectedStatus
-            ${null}      | ${null}         | ${500}
-            ${testEmail} | ${null}         | ${500}
-            ${null}      | ${testPassword} | ${500}
-            ${testEmail} | ${testPassword} | ${200}
+            ${null}      | ${null}         | ${StatusCodes.BAD_REQUEST}
+            ${testEmail} | ${null}         | ${StatusCodes.BAD_REQUEST}
+            ${null}      | ${testPassword} | ${StatusCodes.BAD_REQUEST}
+            ${testEmail} | ${testPassword} | ${StatusCodes.OK}
         `(
             'when validating login request',
             ({ email, password, expectedStatus }) => {
                 it(`should return a ${expectedStatus}${
                     email ? '' : ' without an email'
                 }${password ? '' : ' without a password'}`, async () => {
-                    const loginRequest: LoginModel = { email, password };
+                    const loginRequest: User = { email, password };
 
                     const response = await request(testContext)
                         .post(`${controllerPath}${loginPath}`)
@@ -47,7 +48,7 @@ describe('AuthorizationController', () => {
         );
 
         it('should return back an authroization token to the client', async () => {
-            const loginRequest: LoginModel = {
+            const loginRequest: User = {
                 email: testEmail,
                 password: testPassword,
             };
