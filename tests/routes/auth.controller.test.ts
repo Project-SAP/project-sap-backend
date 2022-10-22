@@ -1,10 +1,10 @@
-import { Express } from 'express';
-import { serverInit } from '../../src/utils/server.utils';
 import { attachControllers } from '@decorators/express';
-import { AuthController } from '../../src/controller/auth.controller';
+import { Express } from 'express';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
-import User from '../../src/models/user.model';
 import request from 'supertest';
+import { AuthController } from '../../src/controller/auth.controller';
+import User from '../../src/models/user.model';
+import { serverInit } from '../../src/utils/server.utils';
 
 describe('AuthorizationController', () => {
     const controllerPath = '/auth';

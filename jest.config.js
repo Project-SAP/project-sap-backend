@@ -6,7 +6,7 @@ module.exports = {
     verbose: true,
     forceExit: true,
     coveragePathIgnorePatterns: [
-        "/node_modules/"
-    ]
-    // clearMocks: true
+        '/node_modules/'
+    ],
+    setupFiles: ['dotenv/config'],
 };

@@ -8,6 +8,7 @@
         "esbenp.prettier-vscode",
         "msjsdiag.vscode-react-native",
         "gruntfuggly.todo-tree",
-        "ms-vscode.vscode-typescript-next"
+        "ms-vscode.vscode-typescript-next",
+        "eamodio.gitlens"
     ]
 }

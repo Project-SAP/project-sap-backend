@@ -1,4 +1,6 @@
 import { ServerApplication } from './serverApplication';
 
 // Spin up new server instance
-const application = new ServerApplication();
+const applicationContext = new ServerApplication();
+
+export default applicationContext;
