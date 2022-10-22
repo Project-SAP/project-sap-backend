@@ -13,6 +13,9 @@ import { User, UserModel } from './../models/user.model';
  */
 @Controller('/auth')
 export class AuthController {
+    /**
+     *  Setup strategy for authentication of other endpoints once user has been signed in and given an auth token
+     */
     constructor() {
         const strategyConfig = {
             secretOrKey: process.env.AUTH_SECRET,
@@ -20,7 +23,6 @@ export class AuthController {
             audience: 'catSafe.com',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         };
-        // console.log(strategyConfig);
         passport.use('login', new Strategy(strategyConfig, this.authenticate));
     }
 
@@ -120,7 +122,9 @@ export class AuthController {
      * @returns
      */
     private generateToken(body: any): Secret {
-        return jwt.sign(body, process.env.AUTH_SECRET);
+        return jwt.sign(body, process.env.AUTH_SECRET, {
+            expiresIn: process.env.AUTH_TOKEN_TIMEOUT,
+        });
     }
 
     private buildApiErrorResponse(
