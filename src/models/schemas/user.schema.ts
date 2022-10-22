@@ -1,10 +1,11 @@
-import mongoose, { Model, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
-import User from '../user.model';
+import mongoose, { Schema } from 'mongoose';
+import { User, UserMethods, UserModel } from '../user.model';
+
 /**
  * Schema setup for @type {User}
  */
-const UserSchema: Schema = new Schema<User>({
+const UserSchema: Schema = new Schema<User, {}, UserMethods>({
     email: {
         type: String,
         required: true,
@@ -31,16 +32,17 @@ UserSchema.pre('save', async function (next) {
  * Validate a given password with it the related database password
  * @param password login request password that needs validated
  */
-UserSchema.methods.isValidPassword = async function (password: string) {
+UserSchema.methods.isValidPassword = function (password: string) {
     const user = this;
-    const compare = await bcrypt.compare(password, user.password);
+    const compare = bcrypt.compareSync(password, user.password);
 
     return compare;
 };
 
 /**
- * A model based on the given schema. Abstracts and simplifies database calls.
+ * A model based on the given schema. Repository object that abstracts and simplifies database calls.
  */
-const UserRepository: Model<User> = mongoose.model<User>('user', UserSchema);
-
-export default UserRepository;
+export const UserRepository: UserModel = mongoose.model<User, UserModel>(
+    'user',
+    UserSchema
+);
