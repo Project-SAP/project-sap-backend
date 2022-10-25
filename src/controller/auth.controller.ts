@@ -50,7 +50,7 @@ export class AuthController {
             );
         }
 
-        const returnedVal = await UserRepository.findOne({
+        await UserRepository.findOne({
             email: loginRequest.email,
         })
             .then((user: User) => {
@@ -110,7 +110,7 @@ export class AuthController {
      * Validate a given password with it the related database password
      * @param password login request password that needs validated
      */
-    private isValidPassword(user: User, password: string) {
+    private isValidPassword(user: User, password: string): boolean {
         const compare = bcrypt.compareSync(password, user.password);
 
         return compare;

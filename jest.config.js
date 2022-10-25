@@ -1,4 +1,4 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
@@ -8,5 +8,9 @@ module.exports = {
     coveragePathIgnorePatterns: [
         '/node_modules/'
     ],
-    setupFiles: ['dotenv/config'],
+    globalSetup: './tests/.jest/setupInMemoryDatabase.ts',
+    globalTeardown: './tests/.jest/teardownInMemoryDatabase.ts',
+    setupFiles: ['./tests/.jest/setupEnv.ts'],
+    setupFilesAfterEnv: ['./tests/.jest/jest.setup.ts'],
+    testTimeout: 10000,
 };

@@ -3,7 +3,7 @@ import { Express } from 'express';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import request from 'supertest';
 import { AuthController } from '../../src/controller/auth.controller';
-import User from '../../src/models/user.model';
+import { UserRepository } from '../../src/models/schemas/user.schema';
 import { serverInit } from '../../src/utils/server.utils';
 
 describe('AuthorizationController', () => {
@@ -36,7 +36,16 @@ describe('AuthorizationController', () => {
                 it(`should return a ${expectedStatus}${
                     email ? '' : ' without an email'
                 }${password ? '' : ' without a password'}`, async () => {
-                    const loginRequest: User = { email, password };
+                    // Load mock user into in memory database
+                    const userDB = new UserRepository({
+                        email: testEmail,
+                        password: testPassword,
+                        active: true,
+                        creationDate: new Date(),
+                    });
+                    await userDB.save();
+
+                    const loginRequest = { email, password };
 
                     const response = await request(testContext)
                         .post(`${controllerPath}${loginPath}`)
@@ -48,7 +57,16 @@ describe('AuthorizationController', () => {
         );
 
         it('should return back an authroization token to the client', async () => {
-            const loginRequest: User = {
+            // Load mock user into in memory database
+            const userDB = new UserRepository({
+                email: testEmail,
+                password: testPassword,
+                active: true,
+                creationDate: new Date(),
+            });
+            await userDB.save();
+
+            const loginRequest = {
                 email: testEmail,
                 password: testPassword,
             };
@@ -57,7 +75,43 @@ describe('AuthorizationController', () => {
                 .post(`${controllerPath}${loginPath}`)
                 .send(loginRequest);
 
-            expect(response.statusCode).toEqual(200);
+            expect(response.statusCode).toEqual(StatusCodes.OK);
+            expect(response.body.token).toBeTruthy();
+        });
+
+        it('should return a 404 if user does not exists in the database', async () => {
+            const loginRequest = {
+                email: testEmail,
+                password: testPassword,
+            };
+
+            const response = await request(testContext)
+                .post(`${controllerPath}${loginPath}`)
+                .send(loginRequest);
+
+            expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        });
+
+        it('should return a 400 if the passwords to not match', async () => {
+            // Load mock user into in memory database
+            const userDB = new UserRepository({
+                email: testEmail,
+                password: testPassword,
+                active: true,
+                creationDate: new Date(),
+            });
+            await userDB.save();
+
+            const loginRequest = {
+                email: testEmail,
+                password: 'mismatchingPassword',
+            };
+
+            const response = await request(testContext)
+                .post(`${controllerPath}${loginPath}`)
+                .send(loginRequest);
+
+            expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
         });
     });
 });
