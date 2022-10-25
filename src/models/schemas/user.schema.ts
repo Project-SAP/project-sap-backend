@@ -15,10 +15,14 @@ const UserSchema: Schema = new Schema<User, UserModel, UserMethods>({
         type: String,
         required: true,
     },
+    userName: {
+        type: String,
+        required: false,
+    },
     active: {
         type: Boolean,
         required: true,
-        // TODO: Determine if email validation is required. Then this will need to be updated to default to false.
+        // TODO: Determine if email validation is required. If so, then this will need to be updated to default to false.
         default: true,
     },
     creationDate: {
