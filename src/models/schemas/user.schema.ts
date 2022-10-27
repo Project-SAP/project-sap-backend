@@ -18,6 +18,7 @@ const UserSchema: Schema = new Schema<User, UserModel, UserMethods>({
     userName: {
         type: String,
         required: false,
+        unique: true,
     },
     active: {
         type: Boolean,
