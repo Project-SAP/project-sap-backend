@@ -1,9 +1,9 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import { attachControllers } from '@decorators/express';
-import { TestController } from './controller/test.controller';
 import { connect } from "mongoose";
 import cors from 'cors';
+import { AuthController } from './controller/auth.controller';
 
 /**
  * Keeps track of application lifecycle and maintains a testable server context
@@ -20,7 +20,7 @@ export class ServerApplication {
 
         this.context = this.serverInit((app: Express) => {
             // Bind controllers to application
-            attachControllers(app, [TestController]);
+            attachControllers(app, [AuthController]);
         });
 
         this.context.listen(this.port, async () => {
