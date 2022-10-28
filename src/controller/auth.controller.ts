@@ -59,7 +59,7 @@ export class AuthController {
                     return this.buildApiErrorResponse(
                         response,
                         StatusCodes.NOT_FOUND,
-                        new Error('User not found')
+                        new Error('Invalid credentials')
                     );
                 } else {
                     // Validate login
@@ -67,7 +67,7 @@ export class AuthController {
                         return this.buildApiErrorResponse(
                             response,
                             StatusCodes.BAD_REQUEST,
-                            new Error('Incorrect password')
+                            new Error('Invalid credentials')
                         );
                     }
                 }
