@@ -54,7 +54,7 @@ export class AuthController {
         }
 
         // Await on user for validation
-        let user: User = await this.userService
+        const user: User = await this.userService
             .findByEmail(loginRequest.email)
             .then((foundUser) => foundUser);
 
