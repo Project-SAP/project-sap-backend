@@ -5,8 +5,9 @@ import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import jwt, { Secret } from 'jsonwebtoken';
 import passport from 'passport';
 import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
-import { UserRepository } from './../models/schemas/user.schema';
-import { User, UserModel } from './../models/user.model';
+import { buildApiErrorResponse } from '../utils/errors/apiResponse.error';
+import { User } from './../models/user.model';
+import { UserService } from './../service/user.service';
 
 /**
  * Controller for handling both authorization and authentication
@@ -26,6 +27,8 @@ export class AuthController {
         passport.use('login', new Strategy(strategyConfig, this.authenticate));
     }
 
+    private userService = new UserService();
+
     /**
      * Log a user into application given an email and password
      */
@@ -35,7 +38,7 @@ export class AuthController {
 
         // Validate request
         if (!loginRequest.email) {
-            return this.buildApiErrorResponse(
+            return buildApiErrorResponse(
                 response,
                 StatusCodes.BAD_REQUEST,
                 new Error('No email given')
@@ -43,67 +46,61 @@ export class AuthController {
         }
 
         if (!loginRequest.password) {
-            return this.buildApiErrorResponse(
+            return buildApiErrorResponse(
                 response,
                 StatusCodes.BAD_REQUEST,
                 new Error('No password given')
             );
         }
 
-        await UserRepository.findOne({
-            email: loginRequest.email,
-        })
-            .then((user: User) => {
-                // Was user found?
-                if (!user) {
-                    return this.buildApiErrorResponse(
-                        response,
-                        StatusCodes.NOT_FOUND,
-                        new Error('Invalid credentials')
-                    );
-                } else {
-                    // Validate login
-                    if (!this.isValidPassword(user, loginRequest.password)) {
-                        return this.buildApiErrorResponse(
-                            response,
-                            StatusCodes.BAD_REQUEST,
-                            new Error('Invalid credentials')
-                        );
-                    }
-                }
-            })
-            .catch((error: Error) => {
-                return this.buildApiErrorResponse(
+        // Await on user for validation
+        let user: User = await this.userService
+            .findByEmail(loginRequest.email)
+            .then((foundUser) => foundUser);
+
+        // Validate response from database
+        if (!user) {
+            return buildApiErrorResponse(
+                response,
+                StatusCodes.NOT_FOUND,
+                new Error('Invalid credentials')
+            );
+        }
+
+        if (user) {
+            // Validate login
+            if (!this.isValidPassword(user, loginRequest.password)) {
+                return buildApiErrorResponse(
                     response,
-                    StatusCodes.INTERNAL_SERVER_ERROR,
-                    error
+                    StatusCodes.BAD_REQUEST,
+                    new Error('Invalid credentials')
                 );
-            });
+            }
+        }
 
         // Login request is valid. Generate token and return to user
         return response.json({
-            token: this.generateToken({ email: loginRequest.email }),
+            token: this.generateToken({ email: user.email }),
         });
     }
 
-    private authenticate(jwtPaylod: any, done: VerifiedCallback) {
-        UserRepository.findOne(
-            { email: jwtPaylod.email },
-            (error: Error, user: UserModel) => {
+    private async authenticate(jwtPaylod: any, done: VerifiedCallback) {
+        await this.userService
+            .findByEmail(jwtPaylod.email)
+            .then((foundUser) => {
                 let returnedError: Error;
                 let returnedUser: any = false;
 
-                if (error) {
-                    returnedError = error;
-                }
-
-                if (user) {
-                    returnedUser = user;
+                if (foundUser) {
+                    returnedUser = foundUser;
+                } else {
+                    returnedError = ApiError.build()
+                        .setStatusCode(StatusCodes.BAD_REQUEST)
+                        .setMessage('Failed to authenticate');
                 }
 
                 return done(returnedError, returnedUser);
-            }
-        );
+            });
     }
 
     /**
@@ -125,16 +122,5 @@ export class AuthController {
         return jwt.sign(body, process.env.AUTH_SECRET, {
             expiresIn: process.env.AUTH_TOKEN_TIMEOUT,
         });
-    }
-
-    private buildApiErrorResponse(
-        response: Response,
-        statuscode: StatusCodes,
-        error: Error
-    ) {
-        response
-            .status(statuscode)
-            .json({ error: { name: error.name, message: error.message } })
-            .end();
     }
 }

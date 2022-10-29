@@ -3,11 +3,13 @@ import { Express } from 'express';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import request from 'supertest';
 import { AuthController } from '../../src/controller/auth.controller';
-import { UserRepository } from '../../src/models/schemas/user.schema';
 import { serverInit } from '../../src/utils/server.utils';
+import { UserInMemoryData } from './../inMemoryData/user.testDb';
 
 describe('AuthorizationController', () => {
     const controllerPath = '/auth';
+
+    const userInMemoryData = new UserInMemoryData();
 
     const testContext: Express = serverInit((app) => {
         attachControllers(app, [AuthController]);
@@ -37,13 +39,12 @@ describe('AuthorizationController', () => {
                     email ? '' : ' without an email'
                 }${password ? '' : ' without a password'}`, async () => {
                     // Load mock user into in memory database
-                    const userDB = new UserRepository({
+                    await userInMemoryData.newPersistant({
                         email: testEmail,
                         password: testPassword,
                         active: true,
                         creationDate: new Date(),
                     });
-                    await userDB.save();
 
                     const loginRequest = { email, password };
 
@@ -58,13 +59,12 @@ describe('AuthorizationController', () => {
 
         it('should return back an authroization token to the client', async () => {
             // Load mock user into in memory database
-            const userDB = new UserRepository({
+            await userInMemoryData.newPersistant({
                 email: testEmail,
                 password: testPassword,
                 active: true,
                 creationDate: new Date(),
             });
-            await userDB.save();
 
             const loginRequest = {
                 email: testEmail,
@@ -94,13 +94,12 @@ describe('AuthorizationController', () => {
 
         it('should return a 400 if the passwords to not match', async () => {
             // Load mock user into in memory database
-            const userDB = new UserRepository({
+            await userInMemoryData.newPersistant({
                 email: testEmail,
                 password: testPassword,
                 active: true,
                 creationDate: new Date(),
             });
-            await userDB.save();
 
             const loginRequest = {
                 email: testEmail,
