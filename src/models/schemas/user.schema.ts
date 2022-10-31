@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import { Schema } from 'mongoose';
-import { User, UserMethods, UserModel } from '../user.model';
+import { Model, Schema } from 'mongoose';
+import { User } from '../user.model';
 
 /**
  * Schema setup for @type {User}
  */
-export const UserSchema: Schema = new Schema<User, UserModel, UserMethods>({
+export const UserSchema: Schema = new Schema<User, Model<User>>({
     email: {
         type: String,
         required: true,
