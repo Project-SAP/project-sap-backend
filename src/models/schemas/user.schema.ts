@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import mongoose, { Schema } from 'mongoose';
-import { User, UserMethods, UserModel } from '../user.model';
+import { Model, Schema } from 'mongoose';
+import { User } from '../user.model';
 
 /**
  * Schema setup for @type {User}
  */
-const UserSchema: Schema = new Schema<User, UserModel, UserMethods>({
+export const UserSchema: Schema = new Schema<User, Model<User>>({
     email: {
         type: String,
         required: true,
@@ -43,11 +43,3 @@ UserSchema.pre('save', async function (next) {
     this.password = hash;
     next();
 });
-
-/**
- * A model based on the given schema. Repository object that abstracts and simplifies database calls.
- */
-export const UserRepository: UserModel = mongoose.model<User, UserModel>(
-    'user',
-    UserSchema
-);
