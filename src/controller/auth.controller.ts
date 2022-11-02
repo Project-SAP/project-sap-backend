@@ -68,6 +68,15 @@ export class AuthController {
         }
 
         if (user) {
+            // Ensure that user is active
+            if (!user.active) {
+                return buildApiErrorResponse(
+                    response,
+                    StatusCodes.FORBIDDEN,
+                    new Error('User inactive')
+                );
+            }
+
             // Validate login
             if (!this.isValidPassword(user, loginRequest.password)) {
                 return buildApiErrorResponse(
@@ -80,6 +89,8 @@ export class AuthController {
 
         // Login request is valid. Generate token and return to user
         return response.json({
+            email: user.email,
+            userName: user.userName,
             token: this.generateToken({ email: user.email }),
         });
     }

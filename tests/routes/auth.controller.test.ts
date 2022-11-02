@@ -57,11 +57,12 @@ describe('AuthorizationController', () => {
             }
         );
 
-        it('should return back an authroization token to the client', async () => {
+        it('should return back an authroization token with user data to the client', async () => {
             // Load mock user into in memory database
             await userInMemoryData.newPersistant({
                 email: testEmail,
                 password: testPassword,
+                userName: 'testUser',
                 active: true,
                 creationDate: new Date(),
             });
@@ -77,6 +78,8 @@ describe('AuthorizationController', () => {
 
             expect(response.statusCode).toEqual(StatusCodes.OK);
             expect(response.body.token).toBeTruthy();
+            expect(response.body.email).toBeTruthy();
+            expect(response.body.userName).toBeTruthy();
         });
 
         it('should return a 404 if user does not exists in the database', async () => {
