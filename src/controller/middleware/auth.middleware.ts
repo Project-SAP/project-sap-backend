@@ -1,61 +1,54 @@
 import { Middleware } from '@decorators/express';
 import { Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
-import { UserService } from './../../service/user.service';
 import { buildApiErrorResponse } from './../../utils/errors/apiResponse.error';
+import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
+import { UserService } from './../../service/user.service';
 
 export class AuthMiddleware implements Middleware {
     constructor() {
         const strategyConfig = {
             secretOrKey: process.env.AUTH_SECRET,
-            issuer: 'catSafe.admin.com',
-            audience: 'catSafe.com',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         };
-        passport.use(
-            'jwt',
-            new Strategy(strategyConfig, AuthMiddleware.authenticate)
-        );
+        passport.use('jwt', new Strategy(strategyConfig, this.validateToken));
     }
 
     public use(request: Request, response: Response, next: any): void {
-        const passRes = passport.authenticate('jwt', (error, user, info) => {
-            if (error || !user) {
-                return buildApiErrorResponse(
-                    response,
-                    StatusCodes.UNAUTHORIZED,
-                    new Error('Unauthorized')
-                );
+        passport.authenticate(
+            'jwt',
+            { session: false },
+            (error, user, info) => {
+                if (error || !user) {
+                    return buildApiErrorResponse(
+                        response,
+                        StatusCodes.UNAUTHORIZED,
+                        new Error('Authentication failed')
+                    );
+                }
+                // Only continue to next middleware or to endpoint if no error has occured
+                next();
             }
-        });
-        // tslint:disable-next-line:no-console
-        console.log('Authenticated!');
-        next();
+        )(request, response, next);
     }
 
-    /**
-     *
-     * @param jwtPaylod
-     * @param done
-     */
-    static async authenticate(jwtPaylod: any, done: VerifiedCallback) {
+    private validateToken(jwtPaylod: any, done: VerifiedCallback) {
         // Get a local instance of the user service
         const userService = new UserService();
-        await userService.findByEmail(jwtPaylod.email).then((foundUser) => {
-            let returnedError: Error;
-            let returnedUser: any = false;
+        return userService
+            .findByEmail(jwtPaylod.email)
+            .then((foundUser) => {
+                // Validate response from database
+                if (!foundUser) {
+                    return done(new Error('Invalid credentials'));
+                }
 
-            if (foundUser) {
-                returnedUser = foundUser;
-            } else {
-                returnedError = ApiError.build()
-                    .setStatusCode(StatusCodes.BAD_REQUEST)
-                    .setMessage('Failed to authenticate');
-            }
-
-            return done(returnedError, returnedUser);
-        });
+                return done(null, foundUser, {
+                    message: 'Authorized successfully',
+                });
+            })
+            .catch((error) => done(error));
     }
 }
