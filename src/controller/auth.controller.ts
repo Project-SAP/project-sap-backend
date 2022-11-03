@@ -1,10 +1,8 @@
 import { Controller, Post } from '@decorators/express';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { STATUS_CODES } from 'http';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import jwt, { Secret } from 'jsonwebtoken';
-import { Db } from 'mongodb';
 import passport from 'passport';
 import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
 import { buildApiErrorResponse } from '../utils/errors/apiResponse.error';
@@ -65,18 +63,8 @@ export class AuthController {
             );
         }
 
-        if (user) {
-            // Validate login
-            if (!this.isValidPassword(user, signupRequest.password)) {
-                return buildApiErrorResponse(
-                    response,
-                    StatusCodes.BAD_REQUEST,
-                    new Error('Invalid credentials')
-                );
-            }
-        }
-
         this.userService.newUser(signupRequest.email, signupRequest.password);
+        next();
     }
 
     /**
