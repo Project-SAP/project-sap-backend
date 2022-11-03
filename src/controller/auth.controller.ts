@@ -41,8 +41,8 @@ export class AuthController {
         passport.authenticate(
             'local',
             { session: false },
-            (error, user, info) => {
-                if (error || !user) {
+            (authError, user, info) => {
+                if (authError || !user) {
                     return buildApiErrorResponse(
                         response,
                         StatusCodes.UNAUTHORIZED,
@@ -50,8 +50,8 @@ export class AuthController {
                     );
                 }
 
-                request.login(user, { session: false }, (error) => {
-                    if (error) {
+                request.login(user, { session: false }, (loginError) => {
+                    if (loginError) {
                         return buildApiErrorResponse(
                             response,
                             StatusCodes.UNAUTHORIZED,
