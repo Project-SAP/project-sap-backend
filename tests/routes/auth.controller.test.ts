@@ -28,9 +28,9 @@ describe('AuthorizationController', () => {
 
         describe.each`
             email        | password        | expectedStatus
-            ${null}      | ${null}         | ${StatusCodes.BAD_REQUEST}
-            ${testEmail} | ${null}         | ${StatusCodes.BAD_REQUEST}
-            ${null}      | ${testPassword} | ${StatusCodes.BAD_REQUEST}
+            ${null}      | ${null}         | ${StatusCodes.UNAUTHORIZED}
+            ${testEmail} | ${null}         | ${StatusCodes.UNAUTHORIZED}
+            ${null}      | ${testPassword} | ${StatusCodes.UNAUTHORIZED}
             ${testEmail} | ${testPassword} | ${StatusCodes.OK}
         `(
             'when validating login request',
@@ -82,7 +82,7 @@ describe('AuthorizationController', () => {
             expect(response.body.userName).toBeTruthy();
         });
 
-        it('should return a 404 if user does not exists in the database', async () => {
+        it('should return a 401 if user does not exists in the database', async () => {
             const loginRequest = {
                 email: testEmail,
                 password: testPassword,
@@ -92,10 +92,10 @@ describe('AuthorizationController', () => {
                 .post(`${controllerPath}${loginPath}`)
                 .send(loginRequest);
 
-            expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+            expect(response.statusCode).toEqual(StatusCodes.UNAUTHORIZED);
         });
 
-        it('should return a 400 if the passwords to not match', async () => {
+        it('should return a 401 if the passwords to not match', async () => {
             // Load mock user into in memory database
             await userInMemoryData.newPersistant({
                 email: testEmail,
@@ -113,7 +113,7 @@ describe('AuthorizationController', () => {
                 .post(`${controllerPath}${loginPath}`)
                 .send(loginRequest);
 
-            expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
+            expect(response.statusCode).toEqual(StatusCodes.UNAUTHORIZED);
         });
     });
 });
