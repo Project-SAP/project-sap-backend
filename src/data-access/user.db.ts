@@ -7,7 +7,7 @@ export class UserRepository extends BaseRepository<User> {
         super('users', UserSchema);
     }
 
-            /**
+    /**
      * Query to find single json object of given type `T`
      * Handles promise resolve and rejection generically.
      * @template T
