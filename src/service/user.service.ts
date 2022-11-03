@@ -16,6 +16,6 @@ export class UserService {
 
     public async newUser(email: string, password: string): Promise<User> {
         let dateTime = new Date();
-        return this.userRepository.insertOne({email, password, dateTime});
+        return this.userRepository.create({email, password, dateTime});
     }
 }

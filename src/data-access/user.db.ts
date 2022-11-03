@@ -14,9 +14,9 @@ export class UserRepository extends BaseRepository<User> {
      * @param {string} email json payload to querys
      * @returns {Promise<T>} single json entity
      */
-     public insertOne(doc: {}): Promise<T> {
+     public create(doc: any): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.repositoryModel.insertOne(doc, (error: Error, response: T) => {
+            this.repositoryModel.create(doc, (error: Error, response: any) => {
                 if (error) {
                     reject(error);
                 }
