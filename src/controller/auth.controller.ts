@@ -1,8 +1,10 @@
 import { Controller, Post } from '@decorators/express';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
+import { STATUS_CODES } from 'http';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import jwt, { Secret } from 'jsonwebtoken';
+import { Db } from 'mongodb';
 import passport from 'passport';
 import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
 import { buildApiErrorResponse } from '../utils/errors/apiResponse.error';
@@ -28,6 +30,54 @@ export class AuthController {
     }
 
     private userService = new UserService();
+
+    @Post('/signup')
+    public async userSignup(request: Request, response: Response, next: any) {
+        const signupRequest: User = request.body;
+
+        // Validate signup req
+        if (!signupRequest.email) {
+            return buildApiErrorResponse(
+                response,
+                StatusCodes.BAD_REQUEST,
+                new Error('No email given')
+            );
+        }
+
+        if (!signupRequest.password) {
+            return buildApiErrorResponse(
+                response,
+                StatusCodes.BAD_REQUEST,
+                new Error('No password')
+            );
+        }
+
+        // Await on user for validation
+        const user: User = await this.userService
+            .findByEmail(signupRequest.email)
+            .then((foundUser) => foundUser);
+
+        if (user) {
+            return buildApiErrorResponse(
+                response,
+                StatusCodes.BAD_REQUEST,
+                new Error('Email already associated with another user')
+            );
+        }
+
+        if (user) {
+            // Validate login
+            if (!this.isValidPassword(user, signupRequest.password)) {
+                return buildApiErrorResponse(
+                    response,
+                    StatusCodes.BAD_REQUEST,
+                    new Error('Invalid credentials')
+                );
+            }
+        }
+
+        this.userService.newUser(signupRequest.email, signupRequest.password);
+    }
 
     /**
      * Log a user into application given an email and password

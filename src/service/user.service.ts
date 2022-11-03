@@ -13,4 +13,9 @@ export class UserService {
     public async findByEmail(email: string): Promise<User> {
         return this.userRepository.findOne({email});
     }
+
+    public async newUser(email: string, password: string): Promise<User> {
+        let dateTime = new Date();
+        return this.userRepository.insertOne({email, password, dateTime});
+    }
 }
