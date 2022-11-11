@@ -14,8 +14,12 @@ export class UserService {
         return this.userRepository.findOne({email});
     }
 
+    public async findByUsername(email: string): Promise<User> {
+        return this.userRepository.findOne({email});
+    }
+
     public async newUser(email: string, password: string, userName: string): Promise<User> {
-        let dateTime = new Date();
+        const dateTime = new Date();
         return this.userRepository.create({email, password, userName, dateTime});
     }
 }
