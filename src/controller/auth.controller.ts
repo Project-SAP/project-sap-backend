@@ -4,9 +4,9 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import jwt, { Secret } from 'jsonwebtoken';
 import passport from 'passport';
-import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
+import { Strategy } from 'passport-local';
+import { User } from '../models/user.model';
 import { buildApiErrorResponse } from '../utils/errors/apiResponse.error';
-import { User } from './../models/user.model';
 import { UserService } from './../service/user.service';
 
 /**
@@ -19,12 +19,13 @@ export class AuthController {
      */
     constructor() {
         const strategyConfig = {
-            secretOrKey: process.env.AUTH_SECRET,
-            issuer: 'catSafe.admin.com',
-            audience: 'catSafe.com',
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            usernameField: 'email',
+            passwordField: 'password',
         };
-        passport.use('login', new Strategy(strategyConfig, this.authenticate));
+        passport.use(
+            'local',
+            new Strategy(strategyConfig, this.validateLoginRequest)
+        );
     }
 
     private userService = new UserService();
@@ -71,17 +72,13 @@ export class AuthController {
             );
         }
 
-        const newUsername = `${signupRequest.userName}#${Math.random() * 1000}`
-
-        // Await on user for validation
-        const testName: User = await this.userService
-            .findByUsername(newUsername)
-            .then((foundUser) => foundUser);
+        var newUserName = signupRequest.userName;
+        newUserName = newUserName + (Math.random() * 1000)
 
         const userCreated = await this.userService.newUser(signupRequest.email, signupRequest.password,
-            newUsername);
+            signupRequest.userName);
 
-        if(!userCreated) {
+        if (!userCreated) {
             return buildApiErrorResponse(
                 response,
                 StatusCodes.INTERNAL_SERVER_ERROR,
@@ -89,93 +86,48 @@ export class AuthController {
             );
         }
 
-        response.send({email: userCreated.email,
-            userName: userCreated.userName});
-        response.status(201).end();
+        response.status(201)
+        next();
     }
 
     /**
      * Log a user into application given an email and password
      */
     @Post('/login')
-    public async userLogin(request: Request, response: Response, next: any) {
-        const loginRequest: User = request.body;
-
-        // Validate request
-        if (!loginRequest.email) {
-            return buildApiErrorResponse(
-                response,
-                StatusCodes.BAD_REQUEST,
-                new Error('No email given')
-            );
-        }
-
-        if (!loginRequest.password) {
-            return buildApiErrorResponse(
-                response,
-                StatusCodes.BAD_REQUEST,
-                new Error('No password given')
-            );
-        }
-
-        // Await on user for validation
-        const user: User = await this.userService
-            .findByEmail(loginRequest.email)
-            .then((foundUser) => foundUser);
-
-        // Validate response from database
-        if (!user) {
-            return buildApiErrorResponse(
-                response,
-                StatusCodes.NOT_FOUND,
-                new Error('Invalid credentials')
-            );
-        }
-
-        if (user) {
-            // Validate login
-            if (!this.isValidPassword(user, loginRequest.password)) {
-                return buildApiErrorResponse(
-                    response,
-                    StatusCodes.BAD_REQUEST,
-                    new Error('Invalid credentials')
-                );
-            }
-        }
-
-        // Login request is valid. Generate token and return to user
-        return response.json({
-            token: this.generateToken({ email: user.email }),
-        });
-    }
-
-    private async authenticate(jwtPaylod: any, done: VerifiedCallback) {
-        await this.userService
-            .findByEmail(jwtPaylod.email)
-            .then((foundUser) => {
-                let returnedError: Error;
-                let returnedUser: any = false;
-
-                if (foundUser) {
-                    returnedUser = foundUser;
-                } else {
-                    returnedError = ApiError.build()
-                        .setStatusCode(StatusCodes.BAD_REQUEST)
-                        .setMessage('Failed to authenticate');
+    public async userLogin(
+        request: Request,
+        response: Response,
+        next: any
+    ): Promise<Response | void> {
+        passport.authenticate(
+            'local',
+            { session: false },
+            (authError, user, info) => {
+                if (authError || !user) {
+                    return buildApiErrorResponse(
+                        response,
+                        StatusCodes.UNAUTHORIZED,
+                        new Error('Login failed')
+                    );
                 }
 
-                return done(returnedError, returnedUser);
-            });
-    }
-
-    /**
-     * Validate a given password with it the related database password
-     * @param password login request password that needs validated
-     */
-    private isValidPassword(user: User, password: string): boolean {
-        const compare = bcrypt.compareSync(password, user.password);
-
-        return compare;
+                request.login(user, { session: false }, (loginError) => {
+                    if (loginError) {
+                        return buildApiErrorResponse(
+                            response,
+                            StatusCodes.UNAUTHORIZED,
+                            new Error('Login failed')
+                        );
+                    }
+                    // Login request is valid. Generate token and return to user
+                    return response.json({
+                        email: user.email,
+                        userName: user.userName,
+                        token: this.generateToken({ email: user.email }),
+                    });
+                });
+            }
+        )(request, response, next);
     }
 
     /**
@@ -187,5 +139,39 @@ export class AuthController {
         return jwt.sign(body, process.env.AUTH_SECRET, {
             expiresIn: process.env.AUTH_TOKEN_TIMEOUT,
         });
+    }
+
+    /**
+     *
+     * @param username email in this case
+     * @param password
+     * @param done
+     * @returns
+     */
+    private validateLoginRequest(
+        username: string,
+        password: string,
+        done: any
+    ) {
+        // Await on user for validation
+        const userService = new UserService();
+        return userService
+            .findByEmail(username)
+            .then((foundUser) => {
+                // Validate response from database
+                if (!foundUser) {
+                    return done(new Error('Invalid credentials'));
+                }
+
+                // Validate login
+                if (!bcrypt.compareSync(password, foundUser.password)) {
+                    return done(new Error('Invalid credentials'));
+                }
+
+                return done(null, foundUser, {
+                    message: 'Logged in successfully',
+                });
+            })
+            .catch((error) => done(error));
     }
 }
