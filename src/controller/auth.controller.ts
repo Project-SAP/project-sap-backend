@@ -50,6 +50,14 @@ export class AuthController {
             );
         }
 
+        if (!signupRequest.userName) {
+            return buildApiErrorResponse(
+                response,
+                StatusCodes.BAD_REQUEST,
+                new Error('No username')
+            );
+        }
+
         // Await on user for validation
         const user: User = await this.userService
             .findByEmail(signupRequest.email)
@@ -63,7 +71,21 @@ export class AuthController {
             );
         }
 
-        this.userService.newUser(signupRequest.email, signupRequest.password);
+        var newUserName = signupRequest.userName;
+        newUserName = newUserName + (Math.random() * 1000)
+
+        const userCreated = await this.userService.newUser(signupRequest.email, signupRequest.password,
+            signupRequest.userName);
+
+        if(!userCreated) {
+            return buildApiErrorResponse(
+                response,
+                StatusCodes.INTERNAL_SERVER_ERROR,
+                new Error('Failed to create user. Sorry!')
+            );
+        }
+
+        response.status(201)
         next();
     }
 

@@ -14,8 +14,8 @@ export class UserService {
         return this.userRepository.findOne({email});
     }
 
-    public async newUser(email: string, password: string): Promise<User> {
+    public async newUser(email: string, password: string, userName: string): Promise<User> {
         let dateTime = new Date();
-        return this.userRepository.create({email, password, dateTime});
+        return this.userRepository.create({email, password, userName, dateTime});
     }
 }
