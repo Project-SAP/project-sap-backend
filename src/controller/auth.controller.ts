@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import jwt, { Secret } from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
+import { User } from '../models/user.model';
 import { buildApiErrorResponse } from '../utils/errors/apiResponse.error';
 import { UserService } from './../service/user.service';
 
