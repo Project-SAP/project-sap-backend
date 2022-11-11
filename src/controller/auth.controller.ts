@@ -71,13 +71,16 @@ export class AuthController {
             );
         }
 
-        var newUserName = signupRequest.userName;
-        newUserName = newUserName + (Math.random() * 1000)
+        let newUserName = signupRequest.userName;
+        newUserName = newUserName + Math.random() * 1000;
 
-        const userCreated = await this.userService.newUser(signupRequest.email, signupRequest.password,
-            signupRequest.userName);
+        const userCreated = await this.userService.newUser(
+            signupRequest.email,
+            signupRequest.password,
+            signupRequest.userName
+        );
 
-        if(!userCreated) {
+        if (!userCreated) {
             return buildApiErrorResponse(
                 response,
                 StatusCodes.INTERNAL_SERVER_ERROR,
@@ -85,7 +88,7 @@ export class AuthController {
             );
         }
 
-        response.status(201)
+        response.status(201);
         next();
     }
 

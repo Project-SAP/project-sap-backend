@@ -15,7 +15,7 @@ export class UserService {
     }
 
     public async newUser(email: string, password: string, userName: string): Promise<User> {
-        let dateTime = new Date();
+        const dateTime = new Date();
         return this.userRepository.create({email, password, userName, dateTime});
     }
 }
