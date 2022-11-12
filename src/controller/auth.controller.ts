@@ -90,8 +90,9 @@ export class AuthController {
             );
         }
 
-        response.status(201)
-        next();
+        response.send({email: userCreated.email, userName: userCreated.userName});
+
+        response.status(201).end();
     }
 
     /**
