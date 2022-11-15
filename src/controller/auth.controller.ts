@@ -72,15 +72,8 @@ export class AuthController {
             );
         }
 
-        const newUsername = `${signupRequest.userName}#${Math.random() * 1000}`
-
-        // Await on user for validation
-        const testName: User = await this.userService
-            .findByUsername(newUsername)
-            .then((foundUser) => foundUser);
-
         const userCreated = await this.userService.newUser(signupRequest.email, signupRequest.password,
-            newUsername);
+            signupRequest.userName);
 
         if (!userCreated) {
             return buildApiErrorResponse(
@@ -90,7 +83,8 @@ export class AuthController {
             );
         }
 
-        response.send({email: userCreated.email, userName: userCreated.userName});
+        response.send({email: userCreated.email,
+            userName: userCreated.userName});
 
         response.status(201).end();
     }
