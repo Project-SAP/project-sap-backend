@@ -15,8 +15,8 @@ export class UserService {
     }
 
     public async newUser(email: string, password: string, userName: string): Promise<User> {
+        const newUsername = `${userName}#${Math.floor(Math.random() * 1000)}`
         const dateTime = new Date();
-        const newUsername = `${userName}#${dateTime}`
 
         return this.userRepository.create({email, password, newUsername, dateTime});
     }

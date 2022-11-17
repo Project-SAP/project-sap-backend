@@ -86,7 +86,7 @@ export class AuthController {
         response.send({email: userCreated.email,
             userName: userCreated.userName});
 
-        response.status(201).end();
+        response.status(201);
     }
 
     /**
