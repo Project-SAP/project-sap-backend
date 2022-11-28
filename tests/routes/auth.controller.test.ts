@@ -3,7 +3,7 @@ import { Express } from 'express';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import request from 'supertest';
 import { AuthController } from '../../src/controller/auth.controller';
-import { serverInit } from '../../src/utils/server.utils';
+import { expressServerInit } from '../../src/utils/server.utils';
 import { UserInMemoryData } from './../inMemoryData/user.testDb';
 
 describe('AuthorizationController', () => {
@@ -11,7 +11,7 @@ describe('AuthorizationController', () => {
 
     const userInMemoryData = new UserInMemoryData();
 
-    const testContext: Express = serverInit((app) => {
+    const testContext: Express = expressServerInit((app) => {
         attachControllers(app, [AuthController]);
     });
 

@@ -87,9 +87,6 @@ export class ServerApplication {
 
         // Setup and configure socket routes and events
         io.on('connection', (socket) => {
-            // tslint:disable-next-line:no-console
-            console.log('Socket Connected');
-
             socket.on('joinQueue', (data: QueueRequestData) => {
                 // Create an entry in the queue using socket and data information
                 // Entries will be unique only if name is username in the database
@@ -98,16 +95,11 @@ export class ServerApplication {
                     room: socket.id,
                 };
 
-                // tslint:disable-next-line:no-console
-                console.log(`${newEntry.name} joined room ${newEntry.room}`);
-
                 // Check if I am a listener or venter
                 if (data.profile === 'venter') {
                     // Check if there is available listener
                     if (availableListeners.length > 0) {
                         // Matches with first available listener if available
-                        // tslint:disable-next-line:no-console
-                        console.log("Matching with available listener");
 
                         const matchedEntry: SocketData =
                             availableListeners.shift();
@@ -122,8 +114,6 @@ export class ServerApplication {
                         });
                     } else {
                         // Adds user to queue if no available listener
-                        // tslint:disable-next-line:no-console
-                        console.log("Waiting for available listener");
 
                         // Check if user is already in queue
                         const idx = findIndexByName(
@@ -147,8 +137,6 @@ export class ServerApplication {
                     // Check if there is available venter
                     if (availableVenters.length > 0) {
                         // Matches with first available venter if available
-                        // tslint:disable-next-line:no-console
-                        console.log("Matching with available venter");
 
                         const matchedEntry: SocketData =
                             availableVenters.shift();
@@ -163,8 +151,6 @@ export class ServerApplication {
                         });
                     } else {
                         // Adds user to queue if no available venter
-                        // tslint:disable-next-line:no-console
-                        console.log("Waiting for available venter");
 
                         // Check if user is already in queue
                         const idx = findIndexByName(
@@ -230,17 +216,10 @@ export class ServerApplication {
 
             socket.on('message', (data: Message) => {
                 const currentRoom = findRoom(socket);
-                // tslint:disable-next-line:no-console
-                console.log(`${data.sender} says ${data.message} in room ${currentRoom}`);
                 io.to(currentRoom).emit('message', {
                     sender: data.sender,
                     message: data.message,
                 });
-            });
-
-            socket.on('disconnect', () => {
-                // tslint:disable-next-line:no-console
-                console.log('Socket Disconnected');
             });
         });
 

@@ -2,7 +2,7 @@ import { attachControllers } from '@decorators/express';
 import { Express } from 'express';
 import request from 'supertest';
 import { TestController } from './../../src/controller/test.controller';
-import { serverInit } from './../../src/utils/server.utils';
+import { expressServerInit } from './../../src/utils/server.utils';
 
 /**
  * Example integration routing testing
@@ -10,7 +10,7 @@ import { serverInit } from './../../src/utils/server.utils';
 describe('TestController', () => {
     const controllerPath = '/test';
 
-    const testContext: Express = serverInit((app) => {
+    const testContext: Express = expressServerInit((app) => {
         attachControllers(app, [TestController]);
     });
 
