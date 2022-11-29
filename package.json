@@ -22,6 +22,7 @@
     },
     "homepage": "https://github.com/Project-SAP/project-sap-backend#readme",
     "dependencies": {
+        "@decorators/di": "^1.0.3",
         "@decorators/express": "^2.6.0",
         "bcrypt": "^5.1.0",
         "body-parser": "^1.20.1",
