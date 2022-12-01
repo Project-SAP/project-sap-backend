@@ -107,8 +107,11 @@ export class AuthController {
             'local',
             { session: false },
             (authError, user, info) => {
+                // tslint:disable-next-line:no-console
                 console.log(authError);
+                // tslint:disable-next-line:no-console
                 console.log(user);
+                // tslint:disable-next-line:no-console
                 console.log(info);
                 if (authError || !user) {
                     return buildApiErrorResponse(
@@ -119,6 +122,7 @@ export class AuthController {
                 }
 
                 request.login(user, { session: false }, (loginError) => {
+                    // tslint:disable-next-line:no-console
                     console.log(loginError);
                     if (loginError) {
                         return buildApiErrorResponse(
