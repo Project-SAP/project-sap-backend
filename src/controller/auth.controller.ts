@@ -72,8 +72,11 @@ export class AuthController {
             );
         }
 
-        const userCreated = await this.userService.newUser(signupRequest.email, signupRequest.password,
-            signupRequest.userName);
+        const userCreated = await this.userService.newUser(
+            signupRequest.email,
+            signupRequest.password,
+            signupRequest.userName
+        );
 
         if (!userCreated) {
             return buildApiErrorResponse(
@@ -83,8 +86,10 @@ export class AuthController {
             );
         }
 
-        response.send({email: userCreated.email,
-            userName: userCreated.userName});
+        response.send({
+            email: userCreated.email,
+            userName: userCreated.userName,
+        });
 
         response.status(201);
     }
@@ -102,6 +107,9 @@ export class AuthController {
             'local',
             { session: false },
             (authError, user, info) => {
+                console.log(authError);
+                console.log(user);
+                console.log(info);
                 if (authError || !user) {
                     return buildApiErrorResponse(
                         response,
@@ -111,6 +119,7 @@ export class AuthController {
                 }
 
                 request.login(user, { session: false }, (loginError) => {
+                    console.log(loginError);
                     if (loginError) {
                         return buildApiErrorResponse(
                             response,
